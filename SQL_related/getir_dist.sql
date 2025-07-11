@@ -89,7 +89,8 @@ WHERE b.district_name IS NULL
 
 
 -- mahalle bazlı nüfus yoğunluğu için önce alan hesabı sonra yoğunluk hesabı
--- bursa_mahalle_valid ve mah_pop_mathched üretilmeden çalışmaz'
+-- bursa_mahalle_valid ve mah_pop_mathched üretilmeden çalışmaz
+
 ALTER TABLE bursa_mahalle_valid ADD COLUMN area_km2 NUMERIC;
 
 UPDATE bursa_mahalle_valid
@@ -107,7 +108,23 @@ FROM bursa_mahalle_valid b
 JOIN mahalle_pop_matched m
   ON b.name = m.hood_name AND b.district_name = m.district_name;
 
-
+-- Bursa_mahalle_valid'e yüz ölçümü ataması yapılmadan çalışmaz.
+-- Sipariş yoğunluğunun hesaplanması ve tabloya dönüştürülmesi
+CREATE TABLE sip_density_per_hood AS 
+SELECT 
+  b.name AS hood_name,
+  b.district_name,
+  b.geom,
+  b.area_km2,
+  pop.population,
+  orders.sip_count,
+  ROUND(pop.population / NULLIF(b.area_km2, 0), 2) AS population_density,
+  ROUND(orders.sip_count::NUMERIC / NULLIF(b.area_km2, 0), 2) AS order_density
+FROM bursa_mahalle_valid b
+JOIN mahalle_pop_matched pop 
+  ON b.name = pop.hood_name AND b.district_name = pop.district_name
+JOIN order_counts_by_hood orders 
+  ON b.name = orders.hood_name AND b.district_name = orders.district_name;
 
 
 
