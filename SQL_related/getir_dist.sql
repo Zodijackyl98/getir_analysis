@@ -88,6 +88,27 @@ WHERE b.district_name IS NULL
 
 
 
+-- mahalle bazlı nüfus yoğunluğu için önce alan hesabı sonra yoğunluk hesabı
+-- bursa_mahalle_valid ve mah_pop_mathched üretilmeden çalışmaz'
+ALTER TABLE bursa_mahalle_valid ADD COLUMN area_km2 NUMERIC;
+
+UPDATE bursa_mahalle_valid
+SET area_km2 = ROUND((ST_Area(geom::geography) / 1000000)::NUMERIC, 4);
+
+CREATE TABLE mah_pop_density AS
+SELECT 
+  b.name AS hood_name,
+  b.district_name,
+  b.geom,
+  b.area_km2,
+  m.population,
+  ROUND(m.population::NUMERIC / NULLIF(b.area_km2, 0), 2) AS pop_density
+FROM bursa_mahalle_valid b
+JOIN mahalle_pop_matched m
+  ON b.name = m.hood_name AND b.district_name = m.district_name;
+
+
+
 
 
 

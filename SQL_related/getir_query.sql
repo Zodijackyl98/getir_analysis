@@ -180,4 +180,17 @@ JOIN mahalle_pop_matched m
  AND o.hood_name = m.hood_name
 WHERE ST_Within(m.geom, o.geom) ORDER BY sip_per_capita DESC LIMIT 10;
 
+-- mahalle bazli alan hesabı
+SELECT b.name, district_name,area_km2 FROM bursa_mahalle_valid b ORDER BY area_km2 DESC LIMIT 10;
 
+-- pop_density mahallelere göre
+SELECT 
+  b.name AS hood_name,
+  b.district_name,
+  b.area_km2,
+  m.population,
+  ROUND(m.population::NUMERIC / NULLIF(b.area_km2, 0), 2) AS pop_density
+FROM bursa_mahalle_valid b
+JOIN mahalle_pop_matched m
+  ON b.name = m.hood_name AND b.district_name = m.district_name 
+  ORDER BY pop_density DESC LIMIT 10;
