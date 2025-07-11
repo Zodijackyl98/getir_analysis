@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "service_points",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "longitude_sp": 29.0845805, "latitude_sp": 40.184289, "service_point_id": "sp_1" }, "geometry": { "type": "Point", "coordinates": [ 29.0845805, 40.184289 ] } },
+{ "type": "Feature", "properties": { "longitude_sp": 28.993845, "latitude_sp": 40.222139666666664, "service_point_id": "sp_2" }, "geometry": { "type": "Point", "coordinates": [ 28.993845, 40.222139666666664 ] } },
+{ "type": "Feature", "properties": { "longitude_sp": 28.930807, "latitude_sp": 40.235765666666666, "service_point_id": "sp_3" }, "geometry": { "type": "Point", "coordinates": [ 28.930807, 40.235765666666666 ] } },
+{ "type": "Feature", "properties": { "longitude_sp": 28.839487, "latitude_sp": 40.224432, "service_point_id": "sp_4" }, "geometry": { "type": "Point", "coordinates": [ 28.839487, 40.224432 ] } }
+]
+}
