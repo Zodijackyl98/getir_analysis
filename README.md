@@ -28,3 +28,18 @@ Getir/SQL related klasöründen bu dosyalara ulaşılabilir. İlk aşamada `/get
    - `neighbourhood_order_count.py` Mahalle bazlı toplam sipariş sayılarını QGIS üzerinden gösterme amaçlı iki farklı PostgreSQL sorgusunu birleştirip, “order\_counts\_by\_hood.geojson” çıktısını üreten script.
    - `district_order_count.py` İlçe bazlı sipariş sayısının oluşturulması için postgreSQL sorgusu çalıştırıp, çıktıyı “district\_order\_count.geojson” olarak kaydeder.
    - `gen_df_then_to_postgre` Mahalle bazlı nüfus bilgisi bu proje içerisinde edinilmesi en güç veri oldu, yalnızca veriye ulaşım değil güncel veriye ulaştıktan sonrada standart dışı oluşturulmuş CSV dosyalarını düzenleyerek, düzenleme sonrası mahalle adlarında yaşanabilecek ufak değişiklikleri yakalayarak doğru mahallelere atanmasını sağlayan PostgreSQL sorgusunu çalıştırır. Sorgu sonrası `mahalle_pop_matched.geojson` dosyası ilişkili mahelle nüfus değerlerini ve mahalle bölgelerini içerisinde barındırır.
+
+
+   ## Django Desteği
+   ### Bilgilendirme
+   - V1.1.0 güncellemesi ile birlikte eklenen Django desteği ekstra bir özellik olup, temel V1.0.0 sürümünü kullananları etkilememektedir. 
+   ### Talimatlar
+   - Proje ile alakalı tüm Django dosyalarına `/getir/Django` klasörü altından ulaşılabilir. 
+   - `updates_for_django.sql` dosyası içerisinde bulunabilecek Django'nun düzgün çalışabilmesi için gerekli olan id bilgilerinin oluşturulması gerekmektedir. 
+   - Kurulumu için Python Django ve psycopg modüllerine ihtiyaç duyulmaktadır.
+   - `settings.py` içerisine projede kullanılan aynı adlı ve sifreli DB ön tanımlı olarak eklenmiş olup TEMPLATES VE INSTALLED_APPS için gerekli düzenlemeler yapılmıştır. 
+   - `models.py` dosyası `python manage.py inspectdb > analytics/models.py` komutu ile otomatik olarak oluşturulmuş olup PostgreSQL içerisindeki tüm tablolar dahil edilmiştir. 
+   - `views.py` Örnek olarak seçilmiş 3 tablonun ve ana sayfanın mantığı ve bağlı olduğu URL'ler ve tüm filtreleme gibi işlemler burada tanımlanmıştır.
+   - `admin.py` Bir superuser oluşturulduktan sonra örnek olması açısından 3 tablo admin penceresine eklenmiştir. Admin girişi için `admin/` den ulaşılabilir veya siteninin anasayfasından sağ üstten erişim sağlanabilmektedir. 
+   - Koşullar sağlandığında `python manage.py runserver` çalıştırılarak development server başlatılabilir. 
+      - Hali hazırda eklenen URL yapıları; `/home, /orders, /sip-per-capita ve /sip-density-per-hood`.

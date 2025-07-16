@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Getir Analytics Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #6f42c1;
+            padding: 20px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 300px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #6f42c1;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #6f42c1;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .card a:hover {
+            background-color: #59359b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Getir Analytics Dashboard</h1>
+        <nav>
+			{% if user.is_authenticated %}
+				<a href="/admin/">Admin Panel</a>
+			{% else %}
+				<a href="/admin/login/?next=/admin/">Login to Admin</a>
+			{% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Welcome to Your Logistics Insights</h2>
+        <p>Explore visual insights and filterable data on Getir's operations.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Order List</h3>
+                <p>View and filter detailed order information, including delivery times and basket values.</p>
+                <a href="{% url 'siparis_list' %}">View Orders</a>
+            </div>
+
+            <div class="card">
+                <h3>Order Density per Neighbourhood Area</h3>
+                <p>Analyze orders per population at the neighborhood and district levels.</p>
+                <a href="{% url 'sip_per_capita' %}">View per Capita</a>
+            </div>
+			
+			<div class="card">
+                <h3>Order Density per Neighbourhood</h3>
+                <p>Analyze order density per Area at the neighborhoods.</p>
+                <a href="{% url 'sip_density_per_hood' %}">View Order Density</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

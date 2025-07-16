@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sipariş Density per Mahalle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 6px;
+            margin: 4px;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        .button-group button {
+            padding: 8px 14px;
+            margin: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order Density Per Hood</h1>
+
+    <form method="get">
+        <input type="text" name="district_name" placeholder="District Name" value="{{ request.GET.district_name }}">
+        <input type="text" name="hood_name" placeholder="Hood Name" value="{{ request.GET.hood_name }}">
+        <input type="text" name="area_km2" placeholder="Area (km²)" value="{{ request.GET.area_km2 }}">
+        <input type="text" name="population" placeholder="Population" value="{{ request.GET.population }}">
+        <input type="text" name="sip_count" placeholder="Order Count" value="{{ request.GET.sip_count }}">
+        <input type="text" name="population_density" placeholder="Pop. Density" value="{{ request.GET.population_density }}">
+        <input type="text" name="order_density" placeholder="Order Density" value="{{ request.GET.order_density }}">
+
+        <div class="button-group">
+            <button type="submit">Filter</button>
+            <a href="{% url 'sip_density_per_hood' %}"><button type="button">Clear Filters</button></a>
+        </div>
+    </form>
+
+    <table>
+        <tr>
+            <th>District</th>
+            <th>Mahalle</th>
+            <th>Area (km²)</th>
+            <th>Population</th>
+            <th>Order Count</th>
+            <th>Population Density</th>
+            <th>Order Density</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row.district_name }}</td>
+            <td>{{ row.hood_name }}</td>
+            <td>{{ row.area_km2 }}</td>
+            <td>{{ row.population }}</td>
+            <td>{{ row.sip_count }}</td>
+            <td>{{ row.population_density }}</td>
+            <td>{{ row.order_density }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
