@@ -1,45 +1,118 @@
-# PROJE KURULUM AŞAMALARI
-
+# PROJECT SETUP PHASES
 ## PostgreSQL 14/ pgAdmin4
-
-Getir adında sıfırdan bir database kurulumu yapıldı. Bu veritabanının kurulması çok önemli çünkü gerek pgAdmin4 gerek Python üzerinden sqlalchemy modülü aracılığıyla databaseden veri sorgulamaları veya doğrudan veritabanına tablo aktarılması gibi işlemler çoğu `python_related` klasörü içerisindeki scriptlerde mevcut.
-
+A database called Getir was installed from scratch. It is very important to
+set up this database because most of the operations such as querying data
+from the database or importing tables directly to the database through the
+sqlalchemy module via pgAdmin4 or Python.
+Available in scripts in the `python_related` folder.
 ## Python/Anaconda
-
-Proje boyunce ihtiyacınız olacak tüm modüllerin bir çıktısını requirements.txt adlı dosyada bulabilirsiniz. İçerisinde sadece Spyder-Kernels ve bu modülün gereksinimleri fazlalıktır. Python 3.12.11 sürümü kullanılarak hazırlanmıştır ve modüller arası bir çakışma yaşanmamıştır. Sıfırdan bu proje için oluşturulan virtual environment Anaconda ile kurulmuş olup Conda 23.9.0 sürümü kullanılmıştır.
-
+You can find an output of all the modules you will need throughout the
+project in a file called requirements.txt. It contains only
+Spyder-Kernels and the requirements of this module are redundant. It was
+built using Python 3.12.11 and there are no conflicts between modules. The
+virtual environment created for this project from scratch was installed with
+Anaconda and Conda version 23.9.0 was used.
 ## QGIS
+QGIS version 3.30.0-'s-Hertogenbosch was used throughout the project. No
+crashes were encountered during the study despite the peak hours. WGS84
+(EPSG:4326) coordinate system was used for all data containing coordinates.
+No extra plugin is required. The PostgreSQL fetch database must be
+registered to QGIS via Data Source Manager. This step is important for
+frequent use in the project, as well as for closing and reopening the
+project without any problems.
+## SQL scripts
+These files can be accessed from the Get/SQL related folder. In the first
+step run `/getir/python_related/ push.py` file and import both order and
+warehouse CSV files to postgreSQL system. After the transfer, the script
+`/getir/sql_related/getir_create_geom.sql` is followed step by step. Run
+`/getir/python_related/getir_data.py`. If you are going to generate the
+bursa_district.geojson file that you will find in the file yourself using
+OSM, you must convert it to Multipolygon type, for this, the process at the
+bottom of the script is applied, but before that, you need to delete the
+"@relations" column in the geojson file you obtained via OSM. This problem
+is overcome by using Geopandas or QGIS. If all goes smoothly, the Geojson
+output is imported into the PostgreSQL database. After completion
+The script `/sql_related/py/get_dist.sql` needs to be followed.
+The `./get_query.sql` file is the file that contains the queries made while
+generating the data. Although it is only a query file, not using it does not
+cause any problems. Executing the code blocks in the SQL files one by one
+will prevent possible errors.
+## Python Scripts
+- At this stage, it is difficult to categorize transactions under a
+certain heading because will be used all together.
+Run the script `/python_related/get_service_ors.py`. I should mention
+that the OpenRouteService (ORS) API key required for route calculation
+on Heigit is mandatory for those who plan to generate data. The key
+requires the creation of an .env file under the `/getir/python_related/`
+folder (ORS_API_KEY=your_key_here) or you can paste your own key. Every 24
+hours your query limits are renewed according to query types. There was
+no limit exceeding in the creation of the whole project. Only the
+geojson file generated with the script must be imported to PostgreSQL,
+all other files are imported automatically. The project does not
+require to open any CSVs from QGIS, one time **provided that the output
+in geojson format is imported into PostgreSQL**.
+- From the same folder, `get_service_ors_bicycle.py` is executed
+and the same process is performed according to the bicycle
+scenario, the geojson output must be exported to PostgreSQL.
+- `ors.compare.py` creates a table showing which of the two different
+vehicle scenarios is advantageous according to time and distance. The
+CSV generated at the end of the script is optional, not mandatory.
+- `pipe.py` is an extra script where you can run your own
+SQL queries and convert them into a DataFrame.
+- `shortest.py` is the distance between two pairs of coordinates and the
+time
+a simple extra script that you can calculate.
+- `service_point_needed.py`, which is the output of "fetch_service_ors.py"
+Using the points in `sip_war_with_routes.csv` file, the script outputs
+geojson as a result of the process using Kmeans according to the number
+of the desired service point.
+- `service_point_isochrone[median,min,half_median].py` scripts ORS
+is used to create isochrome maps. The purpose of creating different
+scripts is to obtain different maps according to different statistical
+data obtained from "delivery_duration", i.e. delivery time. You can
+work with all of them or with the one you prefer, or even not at all.
+- `siparis_bursa_valid.py` combines the "siparis" table and
+"bursa_mahalle_valid" tables in PostgreSQL and saves them in geojson
+format. The extra script does not contribute to the following stages.
+- `neighborhood_order_count.py` A script that combines two different
+PostgreSQL queries to show the total number of orders based on
+neighborhoods on QGIS and produces "order_counts_by_hood.geojson"
+output.
+- `district_order_count.py` Runs a PostgreSQL query to generate district
+based order count and saves the output as
+"district_order_count.geojson".
+- `gen_df_then_to_postgre` Neighborhood-based population information has
+been the most difficult data to obtain in this project, not only
+accessing the data, but also editing CSV files created non-standard
+after accessing the current data, capturing minor changes that may
+occur in the neighborhood names after editing, and runs the PostgreSQL
+query that ensures that they are assigned to the correct neighborhoods.
+After the query
+The `neighborhood_pop_matched.geojson` file contains the associated
+neighborhood population values and neighborhood regions.
 
-Proje boyunca QGIS 3.30.0-'s-Hertogenbosch sürümü kullanılmıştır. Çalışma boyunca yoğun saatlere karşılık hiçbir çökme ile karşılaşılmamıştır. Koordinat içeren tüm verilerde WGS84(EPSG:4326) koordinat sistemi kullanılmıştır.  Ekstra bir plugin gereksinimi yoktur. PostgreSQL getir veritabanı, Data Source Manager aracılığıyla QGIS’e kaydedilmelidir. Bu adım, projede sıkça kullanılmasının yanı sıra projenin kapatılıp yeniden sorunsuz açılması için önemli.
-
-## SQL scriptleri
-
-Getir/SQL related klasöründen bu dosyalara ulaşılabilir. İlk aşamada `/getir/python_related/ push.py` dosyası çalıştırılarak hem siparis hem de warehouse CSV dosyaları postgreSQL sistemine aktarılır. Aktarımın ardından `/getir/sql_related/getir_create_geom.sql` scripti adım adım takip edilir. `/getir/python_related/getir_data.py` çalıştırılır. Hali hazırda dosya içerisinde bulacağınız bursa\_district.geojson dosyasini OSM kullanarak kendiniz üretecekseniz Multipolygon tipine dönüştürmeniz zorunlu bunun için scriptin en altındaki işlem uygulanıyor fakat bunun öncesinde OSM üzerinden elde ettiğiniz geojson dosyasındaki “@relations” sütununu kendiniz silmeniz gerekmektedir. Geopandas veya QGIS kullanılarak bu sorun aşılır. Sorunsuz ilerlenilirse Geojson çıktısı PostgreSQL veritabanına aktarılır. Tamamlanmasını ardından `/sql_related/py/getir_dist.sql` scriptinin takip edilmesi gerekiyor. `./getir_query.sql` dosyası veriler üretilirken yapılan sorguları içeren dosyadır. Yalnızca sorgu dosyası olmakla beraber kullanılmaması bir aksaklık yaratmaz. SQL dosyalarının içerisindeki kod bloklarının teker teker çalıştırılması olası hataların önüne geçecektir.
-
-## Python Scriptleri 
-   - Bu aşamada işlemleri belli bir başlık altında toplaması zor çünkü hepsi bir arada kullanılmaya başlanacak. `/python_related/getir_service_ors.py` scripti çalıştırılır. Heigit üzerinden sonraki aşamalarda rota hesaplanması için gerekli OpenRouteService(ORS) API keyinın veri üretmeyi planlayacak kişiler için zorunlu olduğunu belirteyim. Key için `/getir/python_related/` klasörü altında .env dosyasının oluşturulması gerekmektedir (ORS_API_KEY=your_key_here) veya kendi anahtarınızı yapıştırabilirsiniz. 24 saatte bir sorgu limitleriniz sorgu çeşitlerine göre yenilenmektedir. Tüm projenin oluşturulmasında herhangi bir limit aşımı söz konusu olmamıştır. Script ile üretilen yalnızca geojson dosyasının PostgreSQL’e aktarımı yapılmalıdır, diğer tüm dosyalar otomatik olarak içeri aktarılmaktadır. Proje QGIS üzerinden hiçbir CSV açma zorunluluğu içermez, tek seferlik **elde edilen geojson formatındaki çıktılar PostgreSQL’e aktarıldıkları koşuluyla**.
-   - Aynı klasör içerisinden `getir_service_ors_bicycle.py` çalıştırılarak aynı işlem bisiklet senaryosuna göre gerçekleştirilir, geojson çıktısının PostgreSQL’e aktarılması gerekir.
-   - `ors.compare.py` ile iki farklı araç senaryosu içerisinden zaman ve mesafeye göre hangisinin avantajlı olduğunu gösteren tabloyu oluşturur. Script sonunda oluşturulan CSV opsiyoneldir, kullanımı zorunlu değildir.
-   - `pipe.py` Kendi SQL sorgularınızı çalıştırıp DataFrame’e dönüştürebileceğiniz ekstra bir scripttir.
-   - `shortest.py` iki koordinat çifti arasıdaki mesafe ve süresinin hesaplayabileceğinz basir ekstra bir script.
-   - `service_point_needed.py`, “getir\_service\_ors.py” çıktısı olan `sip_war_with_routes.csv` dosyasındaki noktaları kullanarak istenilen servis noktasının sayısına göre Kmeans kullanarak işlem sonucunda geojson çıktısı veren script.
-   - `service_point_isochrone[median,min,half_median].py` scripleri ORS kullanılarak isochrome haritaları oluşturmak için kullanılıyor. Farklı scriptlerin oluşturulmasındaki amaç “delivery\_duration” yani teslimat süresinden elde edilen farklı istatistiksel verilere göre farklı haritaların elde edilmesi. Hepsi veya tercih etmek istediğiniz arasından bir tanesi ile çalışılabilir hatta hiç kullanılmayada bilir.
-   - `siparis_bursa_valid.py` PostgreSQL’de bulunan “siparis” tablosu ile “bursa\_mahalle\_valid” tablolarını birleştirip, geojson formatında kaydediyor. Ekstra script ilerleyen aşamalara bir katkısı yoktur.
-   - `neighbourhood_order_count.py` Mahalle bazlı toplam sipariş sayılarını QGIS üzerinden gösterme amaçlı iki farklı PostgreSQL sorgusunu birleştirip, “order\_counts\_by\_hood.geojson” çıktısını üreten script.
-   - `district_order_count.py` İlçe bazlı sipariş sayısının oluşturulması için postgreSQL sorgusu çalıştırıp, çıktıyı “district\_order\_count.geojson” olarak kaydeder.
-   - `gen_df_then_to_postgre` Mahalle bazlı nüfus bilgisi bu proje içerisinde edinilmesi en güç veri oldu, yalnızca veriye ulaşım değil güncel veriye ulaştıktan sonrada standart dışı oluşturulmuş CSV dosyalarını düzenleyerek, düzenleme sonrası mahalle adlarında yaşanabilecek ufak değişiklikleri yakalayarak doğru mahallelere atanmasını sağlayan PostgreSQL sorgusunu çalıştırır. Sorgu sonrası `mahalle_pop_matched.geojson` dosyası ilişkili mahelle nüfus değerlerini ve mahalle bölgelerini içerisinde barındırır.
-
-
-   ## Django Desteği
-   ### Bilgilendirme
-   - V1.1.0 güncellemesi ile birlikte eklenen Django desteği ekstra bir özellik olup, temel V1.0.0 sürümünü kullananları etkilememektedir. 
-   ### Talimatlar
-   - Proje ile alakalı tüm Django dosyalarına `/getir/Django` klasörü altından ulaşılabilir. 
-   - `updates_for_django.sql` dosyası içerisinde bulunabilecek Django'nun düzgün çalışabilmesi için gerekli olan id bilgilerinin oluşturulması gerekmektedir. 
-   - Kurulumu için Python Django ve psycopg modüllerine ihtiyaç duyulmaktadır.
-   - `settings.py` içerisine projede kullanılan aynı adlı ve sifreli DB ön tanımlı olarak eklenmiş olup TEMPLATES VE INSTALLED_APPS için gerekli düzenlemeler yapılmıştır. 
-   - `models.py` dosyası `python manage.py inspectdb > analytics/models.py` komutu ile otomatik olarak oluşturulmuş olup PostgreSQL içerisindeki tüm tablolar dahil edilmiştir. 
-   - `views.py` Örnek olarak seçilmiş 3 tablonun ve ana sayfanın mantığı ve bağlı olduğu URL'ler ve tüm filtreleme gibi işlemler burada tanımlanmıştır.
-   - `admin.py` Bir superuser oluşturulduktan sonra örnek olması açısından 3 tablo admin penceresine eklenmiştir. Admin girişi için `admin/` den ulaşılabilir veya siteninin anasayfasından sağ üstten erişim sağlanabilmektedir. 
-   - Koşullar sağlandığında `python manage.py runserver` çalıştırılarak development server başlatılabilir. 
-      - Hali hazırda eklenen URL yapıları; `/home, /orders, /sip-per-capita ve /sip-density-per-hood`.
+## Django Support 
+### Information
+ - Django support added with the V1.1.0 update is an extra feature and does not affect those using the base V1.0.0 version.
+### Instructions
+ - All Django files related to the project can be found in the `/get/Django` folder. 
+ - It is necessary to create the id information required for Django to
+work properly, which can be found in the `updates_for_django.sql` file.
+- To install Python Django and psycopg modules
+is needed. - In `settings.py`, the DB with the same name and password used
+in the project has been added by default and necessary arrangements have
+been made for TEMPLATES and INSTALLED_APPS.
+ - `models.py` file was created
+automatically with `python manage.py inspectdb > analytics/models.py`
+command and all tables in PostgreSQL are included.
+ - `views.py` The logic of
+the 3 tables selected as examples and the main page, the URLs to which they
+are linked and all filtering operations are defined here.
+ - `admin.py` After
+a superuser is created, 3 tables are added to the admin window as an
+example. For admin login, it can be accessed from `admin/` or access can be
+provided from the top right from the homepage of the site.
+ - When conditions are met
+The development server can be started by running `python manage.py
+runserver`.
+ - Currently added URL structures are; `/home, /orders, /sip-per-capita and /sip-density-per-hood`.
