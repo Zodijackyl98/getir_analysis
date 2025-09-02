@@ -91,6 +91,33 @@ After the query
 The `neighborhood_pop_matched.geojson` file contains the associated
 neighborhood population values and neighborhood regions.
 
+## Results
+
+Orders were attached to their corresponding storage locations with respect to the minimum distance that is calculated by iterating for every storage. 
+
+![sip_density](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/spatial/density_sip_points.png)
+
+To find optimum service points, clustering method was used and the solution with 4 service points is shown below.
+
+![service_points](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/spatial/service_points_4.png)
+
+Relationship between area and the number of order for every neighbourhood also brings us useful information. 
+
+![order_density](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/spatial/order_density_per_hood.png)
+
+Analyzing real-life delivery route simulation and calculating delivery time accordingly with different type of vehicles helps choosing which one is better at which under different order, storage and service points locations and then creating table to decide which one we should choose; the route that we can save time by using a car but by doing that risking consuming more fuel but gaining opportunity to carry more items or the route that we can save fuel but arriving late to costumers.
+
+![car_bike_routes](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/spatial/car_bike_routes_wh5.png)
+
+![car_bike_routes](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/routes_better.png)
+
+With the help of ısochrone maps, one can combine it with clustering method and optimize both service point number and service point location decision making process easily.
+
+![car_bike_routes](https://github.com/Zodijackyl98/getir_analysis/blob/main/Stats/spatial/isochrone_service_problem.png)
+
+
+
+
 ## Django Support 
 ### Information
  - Django support added with the V1.1.0 update is an extra feature and does not affect those using the base V1.0.0 version.
